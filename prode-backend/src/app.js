@@ -10,7 +10,7 @@ const authRoutes = require('./routes/auth.routes');
 const app = express();
 
 // Middlewares globales
-//app.use(cors());
+app.use(cors({ origin: true }));
 app.use(morgan('dev'));
 app.use(express.json());
 

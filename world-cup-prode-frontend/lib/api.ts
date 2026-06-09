@@ -211,6 +211,7 @@ export async function getPredicciones(token: string): Promise<Prediccion[]> {
   return unwrapList(data).map(normalizePrediccion)
 }
 
+
 export async function getRanking(): Promise<RankingItem[]> {
   const data = await apiFetch<unknown>("/usuarios/ranking")
   return unwrapList(data).map((raw) => {
@@ -221,6 +222,7 @@ export async function getRanking(): Promise<RankingItem[]> {
       nombre: u.nombre,
       apellido: u.apellido,
       puntos: u.puntos,
+      pagado: u.pagado
     }
   })
 }

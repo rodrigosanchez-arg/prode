@@ -11,7 +11,7 @@ import type {
 import { buscarEquipo } from "./equipos"
 
 // URL base de tu API.
-export const API_BASE_URL = "https://prode.railway.internal/api"
+export const API_BASE_URL = "https://prode.railway.internal:8080/api"
 
 const TOKEN_KEY = "prode_token"
 

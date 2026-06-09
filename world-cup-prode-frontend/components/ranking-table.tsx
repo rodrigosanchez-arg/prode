@@ -1,10 +1,14 @@
 "use client"
 
 import useSWR from "swr"
-import { Loader2, Trophy, Medal } from "lucide-react"
+import { Loader2, Trophy, Medal, DollarSign, Users } from "lucide-react"
 import { getRanking } from "@/lib/api"
 import { useAuth } from "@/lib/auth-context"
 import { cn } from "@/lib/utils"
+
+
+// 💰 Define acá cuánto cuesta la inscripción en tu moneda local
+const PRECIO_INSCRIPCION = 5000
 
 export function RankingTable() {
   const { data, error, isLoading } = useSWR("ranking", getRanking)
@@ -30,6 +34,10 @@ export function RankingTable() {
 
   const ranking = [...(data ?? [])].sort((a, b) => b.puntos - a.puntos)
   const podio = ranking.slice(0, 3)
+
+  // 🧮 CÁLCULO DEL POZO ACUMULADO
+  const usuariosPagados = ranking.filter(item => item.pagado).length
+  const pozoTotal = usuariosPagados * PRECIO_INSCRIPCION
 
   return (
     <div className="flex flex-col gap-6">
@@ -74,6 +82,35 @@ export function RankingTable() {
         </div>
       )}
 
+      {/* 💵 APARTADO: POZO ACUMULADO */}
+      {ranking.length > 0 && (
+        <div className="relative overflow-hidden rounded-xl border border-border bg-gradient-to-br from-card to-primary/5 p-5 shadow-sm">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-col gap-1">
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Pozo Acumulado 🏆
+              </span>
+              <span className="text-3xl font-black tracking-tight text-foreground font-mono">
+                ${pozoTotal.toLocaleString("es-AR")}
+              </span>
+            </div>
+            <div className="flex flex-col items-end justify-center rounded-lg bg-primary/10 px-3 py-2 text-right">
+              <span className="flex items-center gap-1 text-xs font-bold text-primary">
+                <Users className="size-3.5" /> {usuariosPagados}
+              </span>
+              <span className="text-[10px] font-medium text-muted-foreground">
+                Anotados pagos
+              </span>
+            </div>
+          </div>
+          {/* Un sutil indicador abajo para dar contexto */}
+          <div className="mt-3 text-[11px] text-muted-foreground">
+            Inscripción: <span className="font-semibold text-foreground">${PRECIO_INSCRIPCION.toLocaleString("es-AR")}</span> por jugador. ¡El 100% va para los ganadores!
+          </div>
+        </div>
+      )}
+
+      {/* Tabla completa */}
       {/* Tabla completa */}
       <div className="overflow-hidden rounded-xl border border-border bg-card">
         <table className="w-full text-sm">
@@ -110,6 +147,17 @@ export function RankingTable() {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <span className="font-semibold">{item.apodo}</span>
+                      
+                      {/* 🌟 ESTRELLITA DE PAGADO */}
+                      {item.pagado && (
+                        <span
+                          title="Inscripción paga" 
+                          className="inline-flex items-center justify-center text-amber-500 animate-pulse-slow"
+                        >
+                          ★
+                        </span>
+                      )}
+
                       {esYo && (
                         <span className="rounded-full bg-primary/20 px-2 py-0.5 text-[10px] font-semibold text-primary">
                           Vos
